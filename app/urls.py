@@ -1,12 +1,22 @@
-from django.urls import path
-from .views_cbv import CarListCreateView, CarDetailView
-from .views import car_detail_update_delete, car_list_create
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from .views import ProductViewSet, ProductListByChildCategorySlugAPIView
+
+
+
+router = DefaultRouter()
+router.register(r"", ProductViewSet, basename='product')
 
 urlpatterns = [
-    path("", CarListCreateView.as_view(), name="car-list-create"),
-    path("cars/<int:pk>/", CarDetailView.as_view(), name="car-detail"),
-    path("cars/", car_list_create, name="car-list-create"),
-    path("cars/<int:pk>/", car_detail_update_delete, name="car-detail"),
+    path("", include(router.urls)),
+
+    path(
+        "products/by-child-category/<slug:slug>/",
+        ProductListByChildCategorySlugAPIView.as_view(),
+        name="product-list-by-child-category-slug",
+    ),
+    
 ]
 
 

@@ -1,55 +1,29 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-from rest_framework import generics
+from rest_framework import viewsets, generics
+from rest_framework.permissions import AllowAny
 
-from .models import Car
-from .serializers import CarSerializer
+from .models import Product
+from .serializers import ProductSerializer
 
 
-#FBV
 
-@api_view(['POST', 'GET'])
-def car_list_create(request):
-    if request.method == "GET":
-        cars = Car.objects.all().order_by("-id")
-        serializer = CarSerializer(cars, many=True)
-        return Response(serializer.data)
-    
-
-    #POST
-    serializer = CarSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all().select_related('category')
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
 
 
 
 
-@api_view(["PUT", "PATCH", "DELETE", "GET"])
-def car_detail_update_delete(request, pk:int):
-    car = get_object_or_404(Car, pk=pk)
 
-    if request.method == "GET":
-        serializer = CarSerializer(car)
-        return Response(serializer.data)
-    
-
-    if request.method in ["PUT", "PATCH"]:
-        partial = (request.method == "PATCH")
-        serializer = CarSerializer(car, data=request.data, partial=partial)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # DELETE
-    car.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+class ProductListByChildCategorySlugAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
 
 
-
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        return Product.objects.filter(
+            category__slug=slug,
+            category__parent__isnull=False,
+        
+        ).select_related('category')
