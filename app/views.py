@@ -1,13 +1,14 @@
 from rest_framework import viewsets, generics
 from rest_framework.permissions import AllowAny
-
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
+from .permisson import UpdateInLimitedTime
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [UpdateInLimitedTime]
 
     def get_queryset(self):
         return (
@@ -40,3 +41,6 @@ class CategoryDetailAPIView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
     lookup_field = "slug"
     queryset = Category.objects.all()
+
+
+
