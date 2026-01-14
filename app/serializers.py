@@ -16,6 +16,13 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
+
+    category_id = serializers.PrimaryKeyRelatedField(
+        source="category",
+        queryset=Category.objects.all(),
+        write_only=True
+    )
+
     images = ImageSerializer(many=True, read_only=True)
 
     class Meta:
@@ -27,7 +34,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "description",
             "price",
             "is_active",
-            "category",
+            "category",     
+            "category_id",  
             "images",
             "created_at",
             "updated_at",
