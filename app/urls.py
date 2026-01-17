@@ -5,6 +5,7 @@ from .views import (
     ProductViewSet,
     ProductListByChildCategorySlugAPIView,
     CategoryDetailAPIView,
+    LogoutView
 )
 
 router = DefaultRouter()
@@ -18,4 +19,5 @@ urlpatterns = [
         ProductListByChildCategorySlugAPIView.as_view(),
         name="product-list-by-child-category-slug",
     ),
+    path("api/logout/", LogoutView.as_view(), name="logout"),
 ]
