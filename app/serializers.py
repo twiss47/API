@@ -2,16 +2,25 @@ from rest_framework import serializers
 from .models import Product, Category, Image
 
 
-class ImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Image
-        fields = ['id', 'name', 'image']
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ["id", "name", "slug"]
+
+
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source = 'product.title')
+    class Meta:
+        model = Image
+        exclude = ()
+
+
+
+
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -40,3 +49,4 @@ class ProductSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
