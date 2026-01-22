@@ -3,15 +3,6 @@ from .models import Product, Category, Image
 
 
 
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ["id", "name", "slug"]
-
-
-
-
 class ImageSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source = 'product.title')
     class Meta:
@@ -19,7 +10,18 @@ class ImageSerializer(serializers.ModelSerializer):
         exclude = ()
 
 
+class ProductMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["id", "title", "slug", "price"]
 
+
+class CategorySerializer(serializers.ModelSerializer):
+    products = ProductMiniSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ["id", "name", "slug",'products']
 
 
 
@@ -50,3 +52,11 @@ class ProductSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    products = ProductSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ["id", "name", "slug",'products']

@@ -1,0 +1,7 @@
+{% extends "rest_framework/base.html" %}
+{% load static %}
+
+{% block style %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'drf_dark.css' %}">
+{% endblock %}
